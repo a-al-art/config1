@@ -1,0 +1,7 @@
+echo "Начало базового теста"
+pwd
+ls
+cd documents
+pwd
+ls
+cd project/src

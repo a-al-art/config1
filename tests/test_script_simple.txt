@@ -1,0 +1,8 @@
+echo "Старт простого теста"
+pwd
+ls
+cd documents
+ls
+cat file1.txt
+echo "Тест завершен"
+exit

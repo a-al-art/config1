@@ -1,57 +1,56 @@
+import sys
 import os
-import shlex
-import platform
+from ShellEmulator import ShellEmulator
 
 
 def main():
-    while True:
-        # формирование username@hostname:~$
-        username = os.getlogin()
-        hostname = platform.node()
-        current_dir = "~" # заглушка
-        prompt = f"{username}@{hostname}:{current_dir}$ "
+    # Обработка параметров командной строки
+    if len(sys.argv) not in [1, 3]:
+        print("Использование:")
+        print("  Интерактивный режим: python main.py")
+        print("  Режим скрипта: python main.py <путь_к_VFS> <путь_к_скрипту>")
+        print("Пример: python main.py utils/vfs_structure.csv scripts/test_script.txt")
+        sys.exit(1)
 
-        # ждем ввод пользователя
-        user_input = input(prompt).strip()
+    # Режим работы
+    if len(sys.argv) == 1:
+        # Интерактивный режим
+        vfs_path = "utils/vfs_structure.csv"  # путь по умолчанию (CSV)
+        script_path = None
+    else:
+        # Режим скрипта
+        vfs_path = sys.argv[1]
+        script_path = sys.argv[2]
 
-        # парсим ввод с учетом кавычек
-        try:
-            parts = shlex.split(user_input)
-        except ValueError as e:
-            print(f"Ошибка парсинга: {e}")
-            continue
+    # Проверка существования файла VFS
+    if not os.path.exists(vfs_path):
+        print(f"Ошибка: файл VFS '{vfs_path}' не существует")
+        sys.exit(1)
 
-        if not parts:
-            continue
+    # Проверка существования скрипта (если указан)
+    if script_path and not os.path.exists(script_path):
+        print(f"Ошибка: файл скрипта '{script_path}' не существует")
+        sys.exit(1)
 
-        command = parts[0]
-        args = parts[1:]
+    # Отладочный вывод параметров (только в режиме скрипта)
+    if script_path:
+        print("-" * 50)
+        print("Конфигурация эмулятора")
+        print("-" * 50)
+        print(f"Путь к VFS: {vfs_path}")
+        print(f"Путь к стартовому скрипту: {script_path}")
+        print("-" * 50)
+        print()
 
-        # обработка команд
-        if command == "exit":
-            # проверка аргументов для exit
-            if len(args) > 0:
-                print(f"exit: неверные аргументы - команда не принимает аргументов")
-                continue
-            break
+    try:
+        shell = ShellEmulator(vfs_path, script_path)
+        success = shell.run()
+        if not success:
+            sys.exit(1)
+    except Exception as e:
+        print(f"Ошибка: {e}")
+        sys.exit(1)
 
-        elif command == "ls":
-            # if len(args) > 1:
-            #     print(f"ls: неверные аргументы - слишком много параметров: {args}")
-            #     continue
-            print(f"ls: аргументы {args}")
-
-        elif command == "cd":
-            # if len(args) > 1:
-            #     print(f"cd: неверные аргументы - слишком много путей: {args}")
-            #     continue
-            if len(args) == 0:
-                print("cd: переход в домашнюю директорию")
-                continue
-            print(f"cd: аргументы {args}")
-
-        else:
-            print(f"Неизвестная команда: {command}")
 
 if __name__ == "__main__":
     main()

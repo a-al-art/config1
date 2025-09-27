@@ -1,0 +1,16 @@
+path,type,content,content_b64
+/home,directory,,
+/home/user,directory,,
+/home/user/documents,directory,,
+/home/user/pictures,directory,,
+/etc,directory,,
+/tmp,directory,,
+/var,directory,,
+/var/log,directory,,
+/home/user/documents/file1.txt,file,"Hello, World!",
+/home/user/documents/file2.txt,file,"Test text",
+/home/user/pictures/img1.jpg,file,,"0LrQvtGC"
+/home/user/pictures/img2.png,file,"PNG",
+/home/user/readme.md,file,"# Welcome\nThis is a readme file.",
+/etc/config.conf,file,"key=value\nport=8080",
+/var/log/system.log,file,"System started\nEverything OK",
