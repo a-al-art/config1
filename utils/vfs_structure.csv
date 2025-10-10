@@ -14,3 +14,4 @@ path,type,content,content_b64
 /home/user/readme.md,file,"# Welcome\nThis is a readme file.",
 /etc/config.conf,file,"key=value\nport=8080",
 /var/log/system.log,file,"System started\nEverything OK",
+/motd,file,"Welcome to the Virtual System!",,

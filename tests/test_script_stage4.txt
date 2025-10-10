@@ -1,0 +1,22 @@
+# Тестирование команд 4 этапа
+pwd
+ls
+ls /home/user/documents
+cd /home/user/documents
+pwd
+ls
+cat file1.txt
+cd /etc
+ls
+cat config.conf
+cd /var/log
+ls
+cat system.log
+cd /home/user/pictures
+ls
+uname
+uname -s
+uname -n
+uname -r
+uname -a
+cd /nonexistent

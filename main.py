@@ -9,7 +9,7 @@ def main():
         print("Использование:")
         print("  Интерактивный режим: python main.py")
         print("  Режим скрипта: python main.py <путь_к_VFS> <путь_к_скрипту>")
-        print("Пример: python main.py utils/vfs_structure.csv scripts/test_script.txt")
+        print("Пример: python main.py utils/vfs_structure.csv tests/test_script_stage4.txt")
         sys.exit(1)
 
     # Режим работы

@@ -3,6 +3,7 @@ import socket
 import getpass
 import os
 import sys
+import platform
 from VirtualFileSystem import VirtualFileSystem
 
 
@@ -81,6 +82,9 @@ class ShellEmulator:
 
             elif command == "touch":
                 self.touch_command(args)
+
+            elif command == "uname":
+                self.uname_command(args)
 
             else:
                 print(f"{command}: команда не найдена")
@@ -172,14 +176,64 @@ class ShellEmulator:
             raise RuntimeError("Отсутствуют аргументы")
         print(f"touch: создание файлов {args} (в памяти VFS)")
 
+    def uname_command(self, args):
+        """Команда uname"""
+        # Обработка флагов
+        sysname = platform.system()
+        nodename = self.hostname
+        release = platform.release()
+        version = platform.version()
+        machine = platform.machine()
+
+        if not args:
+            # Если нет флагов - выводим только имя системы
+            print(sysname)
+            return
+
+        for arg in args:
+            if arg == "-a":
+                # Все поля
+                print(f"{sysname} {nodename} {release} {version} {machine}")
+            elif arg == "-s":
+                print(sysname)
+            elif arg == "-n":
+                print(nodename)
+            elif arg == "-r":
+                print(release)
+            elif arg == "-v":
+                print(version)
+            elif arg == "-m":
+                print(machine)
+            else:
+                print(f"uname: неподдерживаемый флаг: {arg}")
+                if self.script_mode:
+                    raise RuntimeError(f"Неподдерживаемый флаг: {arg}")
+
     def normalize_path(self):
         """Нормализует путь"""
-        self.current_path = self.current_path.replace('//', '/')
-        if self.current_path.endswith('/') and len(self.current_path) > 1:
-            self.current_path = self.current_path[:-1]
+        # Разбиваем путь на части
+        parts = self.current_path.split('/')
+        stack = []
+        for part in parts:
+            if part == '..':
+                if stack and stack[-1] != '..':
+                    stack.pop()
+            elif part and part != '.':
+                stack.append(part)
+
+        # Собираем нормализованный путь
+        if not stack:
+            self.current_path = '/'
+        else:
+            self.current_path = '/' + '/'.join(stack)
 
     def run_script_mode(self):
         """Режим выполнения скрипта с остановкой при ошибках"""
+        # Проверяем и выводим motd
+        motd = self.vfs.get_motd()
+        if motd:
+            print(motd)
+
         for i, line in enumerate(self.script_lines, 1):
             prompt = self.get_prompt()
             print(f"{prompt}{line}")
@@ -197,6 +251,11 @@ class ShellEmulator:
 
     def run_interactive_mode(self):
         """Интерактивный режим"""
+        # Проверяем и выводим motd
+        motd = self.vfs.get_motd()
+        if motd:
+            print(motd)
+
         self.terminal_start()
 
         while self.running:
@@ -224,7 +283,7 @@ class ShellEmulator:
         """Приветственное сообщение (как в оригинале)"""
         welcome_text = (
                 "Добро пожаловать в эмулятор командной строки с VFS\n"
-                "Доступные команды: ls, cd, pwd, cat, echo, mkdir, touch, exit\n"
+                "Доступные команды: ls, cd, pwd, cat, echo, mkdir, touch, exit, uname\n"
                 "Виртуальная файловая система содержит:\n"
                 "  /home/user/documents/ - файлы документов\n"
                 "  /home/user/pictures/ - изображения\n"
