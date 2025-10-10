@@ -48,7 +48,6 @@ def main():
         if not success:
             sys.exit(1)
     except Exception as e:
-        print(f"Ошибка: {e}")
         sys.exit(1)
 
 

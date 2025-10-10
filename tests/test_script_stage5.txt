@@ -1,0 +1,9 @@
+# Тестирование команд 5 этапа
+ls
+ls /home/user/documents
+mv /home/user/documents/file1.txt /home/user/documents/file1_renamed.txt
+ls /home/user/documents
+mv /home/user/documents/file2.txt /home/user/pictures/
+ls /home/user/pictures
+ls /home/user/documents
+mv /nonexistent /home/user/pictures/

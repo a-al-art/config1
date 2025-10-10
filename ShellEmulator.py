@@ -86,6 +86,9 @@ class ShellEmulator:
             elif command == "uname":
                 self.uname_command(args)
 
+            elif command == "mv":
+                self.mv_command(args)
+
             else:
                 print(f"{command}: команда не найдена")
                 if self.script_mode:
@@ -209,6 +212,16 @@ class ShellEmulator:
                 if self.script_mode:
                     raise RuntimeError(f"Неподдерживаемый флаг: {arg}")
 
+    def mv_command(self, args):
+        """Команда mv"""
+        if len(args) != 2:
+            raise RuntimeError("mv: недостаточно аргументов")
+
+        source = args[0]
+        dest = args[1]
+
+        self.vfs.move_node(self.current_path, source, dest)
+
     def normalize_path(self):
         """Нормализует путь"""
         # Разбиваем путь на части
@@ -280,10 +293,10 @@ class ShellEmulator:
                 print(f"Ошибка: {e}")
 
     def terminal_start(self):
-        """Приветственное сообщение (как в оригинале)"""
+        """Приветственное сообщение"""
         welcome_text = (
                 "Добро пожаловать в эмулятор командной строки с VFS\n"
-                "Доступные команды: ls, cd, pwd, cat, echo, mkdir, touch, exit, uname\n"
+                "Доступные команды: ls, cd, pwd, cat, echo, mkdir, touch, exit, uname, mv\n"
                 "Виртуальная файловая система содержит:\n"
                 "  /home/user/documents/ - файлы документов\n"
                 "  /home/user/pictures/ - изображения\n"

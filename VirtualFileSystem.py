@@ -113,3 +113,55 @@ class VirtualFileSystem:
         if node and node["type"] == "file":
             return node["content"]
         return None
+
+    def move_node(self, current_path, source_path, dest_path):
+        """Перемещает узел (файл/директорию) из source в dest"""
+        # Получаем родителя source и сам узел
+        source_parent_path, source_name = self._get_parent_path_and_name(source_path, current_path)
+        source_parent = self.resolve_path(current_path, source_parent_path)
+        if not source_parent or source_name not in source_parent["content"]:
+            raise RuntimeError(f"mv: невозможно найти '{source_path}': Нет такого файла или директории")
+
+        source_node = source_parent["content"][source_name]
+
+        # Определяем, является ли dest директорией
+        dest_node = self.resolve_path(current_path, dest_path)
+        if dest_node and dest_node["type"] == "directory":
+            # dest — директория, перемещаем туда с оригинальным именем
+            dest_parent = dest_node
+            dest_name = source_name
+        else:
+            # dest — файл, определяем его родителя и имя
+            dest_parent_path, dest_name = self._get_parent_path_and_name(dest_path, current_path)
+            dest_parent = self.resolve_path(current_path, dest_parent_path)
+            if not dest_parent:
+                raise RuntimeError(f"mv: невозможно найти '{dest_parent_path}': Нет такого пути")
+
+        # Проверяем, не перезаписываем ли мы существующий узел
+        if dest_name in dest_parent["content"]:
+            raise RuntimeError(
+                f"mv: невозможно переместить '{source_name}' в '{dest_path}': файл/директория уже существует")
+
+        # Удаляем из старого места
+        del source_parent["content"][source_name]
+
+        # Добавляем в новое место
+        dest_parent["content"][dest_name] = source_node
+
+    def _get_parent_path_and_name(self, path, current_path):
+        """Разбивает путь на родительский путь и имя узла"""
+        if path.startswith("/"):
+            full_path = path
+        else:
+            if current_path == "/":
+                full_path = "/" + path
+            else:
+                full_path = current_path.rstrip("/") + "/" + path
+
+        parts = full_path.strip("/").split("/")
+        if len(parts) == 0:
+            raise RuntimeError("Невозможно переместить корень")
+
+        name = parts[-1]
+        parent_path = "/" + "/".join(parts[:-1]) if len(parts) > 1 else "/"
+        return parent_path, name
