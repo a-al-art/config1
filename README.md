@@ -74,3 +74,55 @@ python main.py utils/vfs_structure.csv tests/test_script_stage5.txt
 - `/motd` - сообщение дня
 
 Эмулятор предоставляет полнофункциональную среду для тестирования и изучения работы командной строки UNIX в изолированной среде.
+## Пример использования
+```commandline
+Welcome to the Virtual System!
+Добро пожаловать в эмулятор командной строки с VFS
+Доступные команды: ls, cd, pwd, cat, echo, mkdir, touch, exit, uname, mv
+Виртуальная файловая система содержит:
+  /home/user/documents/ - файлы документов
+  /home/user/pictures/ - изображения
+  /etc/ - конфигурационные файлы
+  /var/log/ - логи
+Для выхода введите 'exit'
+--------------------------------------------------
+artam@Artbook-16s:~$ ls
+documents/
+pictures/
+readme.md
+
+artam@Artbook-16s:~$ pwd
+/home/user
+
+artam@Artbook-16s:~$ cd /home/user/documents
+
+artam@Artbook-16s:~/documents$ pwd
+/home/user/documents
+
+artam@Artbook-16s:~/documents$ cd /home/user
+
+artam@Artbook-16s:~$ pwd
+/home/user
+
+artam@Artbook-16s:~$ cd /home/user/pictures
+
+artam@Artbook-16s:~/pictures$ cat img1.jpg
+кот
+
+artam@Artbook-16s:~/pictures$ cd /home/user/documents
+
+artam@Artbook-16s:~/documents$ cat file2.txt
+Test text
+
+artam@Artbook-16s:~/documents$ uname -a
+Windows Artbook-16s 11 10.0.26100 AMD64
+
+artam@Artbook-16s:~/documents$ pwd
+/home/user/documents
+
+artam@Artbook-16s:~/documents$ uname -s 
+Windows
+
+artam@Artbook-16s:~/documents$ echo Hello
+Hello
+```
